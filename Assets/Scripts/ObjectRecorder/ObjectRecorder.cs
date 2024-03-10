@@ -76,13 +76,13 @@ public class ObjectRecorder : SingletonTemplate<ObjectRecorder>
         if (TimeRecorded > fMaxRecordedTime)
             objectRecorded.RemoveAt(0);
         
-        Transform[] _transforms = FindObjectsOfType<Transform>();
+        Transform[] _transforms = FindObjectsByType<Transform>(FindObjectsSortMode.None);
         int _transformCount = _transforms.Length;
         ObjectRecorded _objectRecorded = new ObjectRecorded(fRecordedTime);
         
-        for (int i = 0; i < _transformCount; i++)
+        for (int _i = 0; _i < _transformCount; _i++)
         {
-            Transform _transform = _transforms[i];
+            Transform _transform = _transforms[_i];
             
             if(_transform.gameObject.layer == toIgnore)
                 continue;
@@ -102,9 +102,9 @@ public class ObjectRecorder : SingletonTemplate<ObjectRecorder>
         ObjectRecordedItem[] _objectRecordedItems = objectRecorded[^1].Items.ToArray();
         int _objectCount = _objectRecordedItems.Length;
 
-        for (int i = 0; i < _objectCount; i++)
+        for (int _i = 0; _i < _objectCount; _i++)
         {
-            ObjectRecordedItem _objectRecordedItem = _objectRecordedItems[i];
+            ObjectRecordedItem _objectRecordedItem = _objectRecordedItems[_i];
             _objectRecordedItem.Replay();
         }
         
@@ -132,9 +132,9 @@ public class ObjectRecorder : SingletonTemplate<ObjectRecorder>
         ObjectRecordedItem[] _objectRecordedItems = objectRecorded[0].Items.ToArray();
         int _objectCount = _objectRecordedItems.Length;
 
-        for (int i = 0; i < _objectCount; i++)
+        for (int _i = 0; _i < _objectCount; _i++)
         {
-            ObjectRecordedItem _objectRecordedItem = _objectRecordedItems[i];
+            ObjectRecordedItem _objectRecordedItem = _objectRecordedItems[_i];
             _objectRecordedItem.SetStatus(_status);
         }
     }

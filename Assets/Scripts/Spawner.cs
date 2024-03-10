@@ -22,7 +22,7 @@ public class Spawner : MonoBehaviour
     /// Start the spawn of prefab
     /// </summary>
     private void Start() => StartCoroutine(Spawn());
-
+    
     /// <summary>
     /// Draw box space where the prefab will spawn
     /// </summary>
