@@ -8,29 +8,35 @@ public class ObjectRecorder : SingletonTemplate<ObjectRecorder>
     #region Fields
     public event Action OnPlaybackStarted;
     public event Action OnPlaybackEnded;
+    
     [SerializeField, Range(1, 144)] private int iRefreshRate = 30;
     [SerializeField, Range(0.0f, 10.0f)] private float fMaxRecordedTime = 5.0f;
     [SerializeField] private KeyCode input = KeyCode.LeftShift;
     [SerializeField] private LayerMask toIgnore;
+    private List<int> layerIgnore = new ();
     private readonly List<ObjectRecorded> objectRecorded = new ();
-    private float fRecordedTime;
-    private float fPlaybackTime;
-    private float fCurrentPlaybackTime;
+    private float fRecordedTime = 0.0f;
+    private float fPlaybackTime = 0.0f;
+    private float fCurrentPlaybackTime = 0.0f;
     private bool bIsRecording = true;
     #endregion
 
     #region Fields
     private float FrameTime => 1.0f / iRefreshRate;
     private float TimeRecorded => objectRecorded.Count > 0 ? objectRecorded[^1].Time - objectRecorded[0].Time : 0.0f;
-    public float MaxRecordedTime => fMaxRecordedTime;
     #endregion
     #endregion
 
     #region Methods
+
     /// <summary>
     /// Invoke the perform method at a specific frame rate
     /// </summary>
-    private void Start() => InvokeRepeating(nameof(Perform), 0.0f, FrameTime);
+    private void Start()
+    {
+        InitLayer();
+        InvokeRepeating(nameof(Perform), 0.0f, FrameTime);
+    }
     
     /// <summary>
     /// Check input to launch the playback with max time
@@ -40,7 +46,21 @@ public class ObjectRecorder : SingletonTemplate<ObjectRecorder>
         if (Input.GetKeyDown(input))
             LaunchPlayBack(fMaxRecordedTime);
     }
-
+    
+    /// <summary>
+    /// Init the List of all the layers that we need to ignore
+    /// </summary>
+    private void InitLayer()
+    {
+        const int _layers = 64;
+        
+        for (int _i = 0; _i < _layers; _i++)
+        {
+            if ((toIgnore & (1 << _i)) != 0)
+                layerIgnore.Add(_i);
+        }
+    }
+    
     /// <summary>
     /// Record or Playback depending on the situation
     /// </summary>
@@ -58,7 +78,7 @@ public class ObjectRecorder : SingletonTemplate<ObjectRecorder>
     /// <param name="_time">Duration of playback, max clamp to the total time recorded</param>
     private void LaunchPlayBack(float _time)
     {
-        if (objectRecorded.Count <= 0)
+        if (objectRecorded.Count <= 0 || !bIsRecording)
             return;
         
         ObjectStatus(false);
@@ -73,21 +93,27 @@ public class ObjectRecorder : SingletonTemplate<ObjectRecorder>
     /// </summary>
     private void Record()
     {
-        if (TimeRecorded > fMaxRecordedTime)
+        while (TimeRecorded > fMaxRecordedTime)
             objectRecorded.RemoveAt(0);
         
         Transform[] _transforms = FindObjectsByType<Transform>(FindObjectsSortMode.None);
         int _transformCount = _transforms.Length;
+        int _layersCount = layerIgnore.Count;
+        int _j;
         ObjectRecorded _objectRecorded = new ObjectRecorded(fRecordedTime);
         
         for (int _i = 0; _i < _transformCount; _i++)
         {
             Transform _transform = _transforms[_i];
+
+            for (_j = 0; _j < _layersCount; _j++)
+            {
+                if (_transform.gameObject.layer == layerIgnore[_j])
+                    break;
+            }
             
-            if(_transform.gameObject.layer == toIgnore)
-                continue;
-            
-            _objectRecorded.Add(new ObjectRecordedItem(_transform.gameObject, _transform));
+            if (_j == _layersCount)
+                _objectRecorded.Add(new ObjectRecordedItem(_transform.gameObject, _transform));
         }
         
         objectRecorded.Add(_objectRecorded);
@@ -103,10 +129,7 @@ public class ObjectRecorder : SingletonTemplate<ObjectRecorder>
         int _objectCount = _objectRecordedItems.Length;
 
         for (int _i = 0; _i < _objectCount; _i++)
-        {
-            ObjectRecordedItem _objectRecordedItem = _objectRecordedItems[_i];
-            _objectRecordedItem.Replay();
-        }
+            _objectRecordedItems[_i].Replay();
         
         fCurrentPlaybackTime += FrameTime;
         
@@ -120,6 +143,7 @@ public class ObjectRecorder : SingletonTemplate<ObjectRecorder>
         
         objectRecorded.Clear();
         bIsRecording = true;
+        fCurrentPlaybackTime = 0.0f;
         OnPlaybackEnded?.Invoke();
     }
 
