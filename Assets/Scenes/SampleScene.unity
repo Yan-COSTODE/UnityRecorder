@@ -1299,8 +1299,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f88c1c67c738f34d9cdfeb500ed83b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  iRefreshRate: 30
-  fMaxRecordedTime: 5
+  iRefreshRate: 60
+  fMaxRecordedTime: 2
   input: 304
   toIgnore:
     serializedVersion: 2

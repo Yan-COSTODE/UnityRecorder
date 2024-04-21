@@ -6,6 +6,7 @@ using UnityEngine;
 public class ObjectRecordedItem
 {
     private GameObject item;
+    private string name;
     private bool status;
     private Vector3 position;
     private Vector3 rotation;
@@ -15,7 +16,8 @@ public class ObjectRecordedItem
     public ObjectRecordedItem(GameObject _item, Transform _transform)
     {
         item = _item;
-        status = _transform.gameObject.activeSelf;
+        name = _item.name;
+        status = _item.activeSelf;
         position = _transform.localPosition;
         rotation = _transform.localEulerAngles;
         scale = _transform.localScale; 
@@ -29,7 +31,7 @@ public class ObjectRecordedItem
     public void Replay()
     {
         if (!item)
-            return;
+            item = new GameObject(name);
             
         item.SetActive(status);
         item.transform.localPosition = position;
@@ -53,6 +55,15 @@ public class ObjectRecordedItem
             else
                 _particleSystem.Stop();
         }
+        
+        if (item.TryGetComponent(out Rigidbody _rigidBody))
+        {
+            ObjectRecordedInfo _info = info[typeof(Rigidbody)];
+            _rigidBody.isKinematic = _info.Integer == 0;
+            _rigidBody.useGravity = _info.Status;
+            _rigidBody.velocity = _info.Vector1;
+            _rigidBody.angularVelocity = _info.Vector2;
+        }
     }
 
     /// <summary>
@@ -63,8 +74,8 @@ public class ObjectRecordedItem
         if (item.TryGetComponent(out ParticleSystem _particleSystem))
             info.Add(typeof(ParticleSystem), new ObjectRecordedInfo(_particleSystem.isPlaying, _particleSystem.time));
 
-        if (item.TryGetComponent(out Rigidbody _rigidbody))
-            info.Add(typeof(Rigidbody), new ObjectRecordedInfo(_rigidbody.useGravity, 0.0f, _rigidbody.isKinematic ? 0 : 1));
+        if (item.TryGetComponent(out Rigidbody _rigidBody))
+            info.Add(typeof(Rigidbody), new ObjectRecordedInfo(_rigidBody.useGravity, 0.0f, _rigidBody.isKinematic ? 0 : 1, _rigidBody.velocity, _rigidBody.angularVelocity));
     }
      
     /// <summary>
@@ -79,18 +90,18 @@ public class ObjectRecordedItem
         if (item.TryGetComponent(out Collider _collider))
             _collider.enabled = _status;
 
-        if (item.TryGetComponent(out Rigidbody _rigidbody))
+        if (item.TryGetComponent(out Rigidbody _rigidBody))
         {
             if (!_status)
             {
-                _rigidbody.useGravity = false;
-                _rigidbody.isKinematic = true;
+                _rigidBody.useGravity = false;
+                _rigidBody.isKinematic = true;
             }
             else
             {
                 ObjectRecordedInfo _info = info[typeof(Rigidbody)];
-                _rigidbody.useGravity = _info.Status;
-                _rigidbody.isKinematic = _info.Integer == 0;
+                _rigidBody.useGravity = _info.Status;
+                _rigidBody.isKinematic = _info.Integer == 0;
             }
         }
     }

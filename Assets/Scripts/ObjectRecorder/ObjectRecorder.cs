@@ -13,7 +13,7 @@ public class ObjectRecorder : SingletonTemplate<ObjectRecorder>
     [SerializeField, Range(0.0f, 10.0f)] private float fMaxRecordedTime = 5.0f;
     [SerializeField] private KeyCode input = KeyCode.LeftShift;
     [SerializeField] private LayerMask toIgnore;
-    private List<int> layerIgnore = new ();
+    private readonly List<int> layerIgnore = new ();
     private readonly List<ObjectRecorded> objectRecorded = new ();
     private float fRecordedTime = 0.0f;
     private float fPlaybackTime = 0.0f;
@@ -93,19 +93,19 @@ public class ObjectRecorder : SingletonTemplate<ObjectRecorder>
     /// </summary>
     private void Record()
     {
-        while (TimeRecorded > fMaxRecordedTime)
+        while (TimeRecorded >= fMaxRecordedTime)
             objectRecorded.RemoveAt(0);
         
         Transform[] _transforms = FindObjectsByType<Transform>(FindObjectsSortMode.None);
         int _transformCount = _transforms.Length;
         int _layersCount = layerIgnore.Count;
-        int _j;
         ObjectRecorded _objectRecorded = new ObjectRecorded(fRecordedTime);
         
         for (int _i = 0; _i < _transformCount; _i++)
         {
+            int _j;
             Transform _transform = _transforms[_i];
-
+            
             for (_j = 0; _j < _layersCount; _j++)
             {
                 if (_transform.gameObject.layer == layerIgnore[_j])
@@ -138,7 +138,7 @@ public class ObjectRecorder : SingletonTemplate<ObjectRecorder>
         
         objectRecorded.RemoveAt(objectRecorded.Count - 1);
 
-        if (fCurrentPlaybackTime < fPlaybackTime && objectRecorded.Count != 0)
+        if (fCurrentPlaybackTime <= fPlaybackTime && objectRecorded.Count != 0)
             return;
         
         objectRecorded.Clear();
