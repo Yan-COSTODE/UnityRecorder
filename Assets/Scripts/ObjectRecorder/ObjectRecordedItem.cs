@@ -31,8 +31,11 @@ public class ObjectRecordedItem
     public void Replay()
     {
         if (!item)
-            item = new GameObject(name);
-            
+            RecreateItem();
+
+        if (!item)
+            return;
+        
         item.SetActive(status);
         item.transform.localPosition = position;
         item.transform.localEulerAngles = rotation;
@@ -40,6 +43,15 @@ public class ObjectRecordedItem
         ReplayStatus();
     }
 
+    /// <summary>
+    /// Recreate the item with all of his saved component
+    /// </summary>
+    private void RecreateItem()
+    {
+        return;
+        item = new GameObject(name);
+    }
+    
     /// <summary>
     /// Replay the status of all the components on this frame
     /// </summary>
@@ -76,33 +88,5 @@ public class ObjectRecordedItem
 
         if (item.TryGetComponent(out Rigidbody _rigidBody))
             info.Add(typeof(Rigidbody), new ObjectRecordedInfo(_rigidBody.useGravity, 0.0f, _rigidBody.isKinematic ? 0 : 1, _rigidBody.velocity, _rigidBody.angularVelocity));
-    }
-     
-    /// <summary>
-    /// Set status of all components on the object
-    /// </summary>
-    /// <param name="_status">Status to apply to all the components</param>
-    public void SetStatus(bool _status)
-    {
-        if (!item)
-            return;
-
-        if (item.TryGetComponent(out Collider _collider))
-            _collider.enabled = _status;
-
-        if (item.TryGetComponent(out Rigidbody _rigidBody))
-        {
-            if (!_status)
-            {
-                _rigidBody.useGravity = false;
-                _rigidBody.isKinematic = true;
-            }
-            else
-            {
-                ObjectRecordedInfo _info = info[typeof(Rigidbody)];
-                _rigidBody.useGravity = _info.Status;
-                _rigidBody.isKinematic = _info.Integer == 0;
-            }
-        }
     }
 }

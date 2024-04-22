@@ -81,7 +81,6 @@ public class ObjectRecorder : SingletonTemplate<ObjectRecorder>
         if (objectRecorded.Count <= 0 || !bIsRecording)
             return;
         
-        ObjectStatus(false);
         bIsRecording = false;
         fPlaybackTime = _time > TimeRecorded ? TimeRecorded : _time;
         fCurrentPlaybackTime = 0.0f;
@@ -132,10 +131,6 @@ public class ObjectRecorder : SingletonTemplate<ObjectRecorder>
             _objectRecordedItems[_i].Replay();
         
         fCurrentPlaybackTime += FrameTime;
-        
-        if(objectRecorded.Count == 1 || fCurrentPlaybackTime >= fPlaybackTime)
-            ObjectStatus(true);
-        
         objectRecorded.RemoveAt(objectRecorded.Count - 1);
 
         if (fCurrentPlaybackTime <= fPlaybackTime && objectRecorded.Count != 0)
@@ -145,22 +140,6 @@ public class ObjectRecorder : SingletonTemplate<ObjectRecorder>
         bIsRecording = true;
         fCurrentPlaybackTime = 0.0f;
         OnPlaybackEnded?.Invoke();
-    }
-
-    /// <summary>
-    /// Set the status of all component on object recorded
-    /// </summary>
-    /// <param name="_status">The status to apply to all objects</param>
-    private void ObjectStatus(bool _status)
-    {
-        ObjectRecordedItem[] _objectRecordedItems = objectRecorded[0].Items.ToArray();
-        int _objectCount = _objectRecordedItems.Length;
-
-        for (int _i = 0; _i < _objectCount; _i++)
-        {
-            ObjectRecordedItem _objectRecordedItem = _objectRecordedItems[_i];
-            _objectRecordedItem.SetStatus(_status);
-        }
     }
     #endregion
 }
