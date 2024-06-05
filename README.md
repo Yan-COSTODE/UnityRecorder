@@ -67,11 +67,11 @@ To rewind the recorded objects:
 - __Usage__: `[SerializeField, Range(1, 144)] private int iRefreshRate = 30;`
 
 ### Duration Setting
-- __Description__: Sets the duration of the recording in seconds.
+- __Description__: Sets the duration in seconds for recording.
 - __Usage__: `[SerializeField, Range(0.0f, 10.0f)] private float fMaxRecordedTime = 5.0f;`
 
 ### Layer Selection
-- __Description__: Specifies the layer of objects to record.
+- __Description__: Specifies the layer of objects to ignore.
 - __Usage__: `[SerializeField] private LayerMask toIgnore;`
 
 ## Example Usage
