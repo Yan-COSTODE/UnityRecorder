@@ -60,7 +60,7 @@ public class ObjectRecordedItem
         if (item.TryGetComponent(out ParticleSystem _particleSystem))
         {
             ObjectRecordedInfo _info = info[typeof(ParticleSystem)];
-            _particleSystem.Simulate(_info.Number, true, true);
+            _particleSystem.Simulate(_info.Number);
             
             if (_info.Status)
                 _particleSystem.Play();

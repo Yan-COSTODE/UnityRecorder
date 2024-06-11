@@ -102,15 +102,15 @@ public class ObjectRecorder : SingletonTemplate<ObjectRecorder>
         
         for (int _i = 0; _i < _transformCount; _i++)
         {
-            int _j;
-            Transform _transform = _transforms[_i];
-            
-            for (_j = 0; _j < _layersCount; _j++)
-            {
-                if (_transform.gameObject.layer == layerIgnore[_j])
-                    break;
-            }
-            
+            int _j = 0;
+            Transform _transform = _transforms[_i];            
+
+            	for (_j = 0; _j < _layersCount; _j++)
+            	{
+                	if (_transform.gameObject.layer == layerIgnore[_j])
+                	    break;
+            	}
+
             if (_j == _layersCount)
                 _objectRecorded.Add(new ObjectRecordedItem(_transform.gameObject, _transform));
         }
