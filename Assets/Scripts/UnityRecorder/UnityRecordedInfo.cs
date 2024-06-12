@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 
 [Serializable]
-public class ObjectRecordedInfo
+public class UnityRecordedInfo
 {
     private bool status;
     private float number;
@@ -16,7 +16,7 @@ public class ObjectRecordedInfo
     public Vector3 Vector1 => vector1;
     public Vector3 Vector2 => vector2;
 
-    public ObjectRecordedInfo(bool _status = false, float _number = 0.0f, int _integer = 0, Vector3 _vector1 = default, Vector3 _vector2 = default)
+    public UnityRecordedInfo(bool _status = false, float _number = 0.0f, int _integer = 0, Vector3 _vector1 = default, Vector3 _vector2 = default)
     {
         status = _status;
         number = _number;

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [Serializable]
-public class ObjectRecordedItem
+public class UnityRecordedItem
 {
     private GameObject item;
     private string name;
@@ -11,9 +11,9 @@ public class ObjectRecordedItem
     private Vector3 position;
     private Vector3 rotation;
     private Vector3 scale;
-    private Dictionary<Type, ObjectRecordedInfo> info;
+    private Dictionary<Type, UnityRecordedInfo> info;
 
-    public ObjectRecordedItem(GameObject _item, Transform _transform)
+    public UnityRecordedItem(GameObject _item, Transform _transform)
     {
         item = _item;
         name = _item.name;
@@ -21,7 +21,7 @@ public class ObjectRecordedItem
         position = _transform.localPosition;
         rotation = _transform.localEulerAngles;
         scale = _transform.localScale; 
-        info = new Dictionary<Type, ObjectRecordedInfo>();
+        info = new Dictionary<Type, UnityRecordedInfo>();
         RegisterStatus();
     }
 
@@ -59,7 +59,7 @@ public class ObjectRecordedItem
     {
         if (item.TryGetComponent(out ParticleSystem _particleSystem))
         {
-            ObjectRecordedInfo _info = info[typeof(ParticleSystem)];
+            UnityRecordedInfo _info = info[typeof(ParticleSystem)];
             _particleSystem.Simulate(_info.Number);
             
             if (_info.Status)
@@ -70,7 +70,7 @@ public class ObjectRecordedItem
         
         if (item.TryGetComponent(out Rigidbody _rigidBody))
         {
-            ObjectRecordedInfo _info = info[typeof(Rigidbody)];
+            UnityRecordedInfo _info = info[typeof(Rigidbody)];
             _rigidBody.isKinematic = _info.Integer == 0;
             _rigidBody.useGravity = _info.Status;
             _rigidBody.velocity = _info.Vector1;
@@ -84,9 +84,9 @@ public class ObjectRecordedItem
     private void RegisterStatus()
     {
         if (item.TryGetComponent(out ParticleSystem _particleSystem))
-            info.Add(typeof(ParticleSystem), new ObjectRecordedInfo(_particleSystem.isPlaying, _particleSystem.time));
+            info.Add(typeof(ParticleSystem), new UnityRecordedInfo(_particleSystem.isPlaying, _particleSystem.time));
 
         if (item.TryGetComponent(out Rigidbody _rigidBody))
-            info.Add(typeof(Rigidbody), new ObjectRecordedInfo(_rigidBody.useGravity, 0.0f, _rigidBody.isKinematic ? 0 : 1, _rigidBody.velocity, _rigidBody.angularVelocity));
+            info.Add(typeof(Rigidbody), new UnityRecordedInfo(_rigidBody.useGravity, 0.0f, _rigidBody.isKinematic ? 0 : 1, _rigidBody.velocity, _rigidBody.angularVelocity));
     }
 }

@@ -2,23 +2,23 @@ using System;
 using System.Collections.Generic;
 
 [Serializable]
-public class ObjectRecorded
+public class UnityRecorded
 {
     private float fTime;
-    private List<ObjectRecordedItem> items;
+    private List<UnityRecordedItem> items;
 
     public float Time => fTime;
-    public List<ObjectRecordedItem> Items => items;
+    public List<UnityRecordedItem> Items => items;
 
-    public ObjectRecorded(float _time)
+    public UnityRecorded(float _time)
     {
         fTime = _time;
-        items = new List<ObjectRecordedItem>();
+        items = new List<UnityRecordedItem>();
     }
 
     /// <summary>
     /// Add object to the list of recorded object on this frame
     /// </summary>
     /// <param name="_item">Object recorded this frame</param>
-    public void Add(ObjectRecordedItem _item) => items.Add(_item);
+    public void Add(UnityRecordedItem _item) => items.Add(_item);
 }
